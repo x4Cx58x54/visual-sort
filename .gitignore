@@ -1,0 +1,14 @@
+.vscode
+include/glad
+include/GLFW
+include/KHR
+include/glm
+include/stb_image.h
+include/assimp
+lib
+*.exe
+*.dll
+*.a
+Makefile
+*.html
+*.py
