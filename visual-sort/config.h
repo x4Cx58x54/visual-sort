@@ -22,6 +22,8 @@ float lastFrame = 0.0f;
 const int maxCubeNum = 50;
 const int maxCubeHeight = 100;
 
+float speed = 3.0f; // Max 100/{move, grow, paint}Rate.
+
 
 float cubePosX[maxCubeNum] = {
     0.0f, 0.3f,
@@ -31,7 +33,7 @@ float curCubePosX[maxCubeNum] = {
 };
 
 bool moving[maxCubeNum] = { false };
-float moveRate = 0.03;
+float moveRate = 0.03 * speed;
 struct {
     float start, end, dist, process;
 } move[maxCubeNum];
@@ -49,7 +51,7 @@ struct {
 glm::vec3 cubeColour[maxCubeNum];
 glm::vec3 curCubeColour[maxCubeNum];
 bool painting[maxCubeNum] = { false };
-float paintRate = 0.09;
+float paintRate = 0.09 * speed;
 struct {
     float startR, endR, distR;
     float startG, endG, distG;
@@ -60,7 +62,7 @@ struct {
 
 int cubeDelaying = 0;
 
-int cubeDelayTime = 24;
+int cubeDelayTime = int(24 / speed);
 
 
 
@@ -83,7 +85,7 @@ glm::vec3 lightPos(0.8f, 1.1f, 1.2f);
 glm::vec3 colourInit(0.2f, 0.2f, 0.44f);
 glm::vec3 colourDeleting(0.32f, 0.32f, 0.50f);
 glm::vec3 colourBlink(0.95f, 0.95f, 0.99f);
-glm::vec3 colourCritical(0.7f, 0.1f, 0.1f);
+glm::vec3 colourCritical(0.6f, 0.0f, 0.9f);
 glm::vec3 colourLookAt(0.1f, 0.5f, 0.2f);
 glm::vec3 colourSorted(0.8f, 0.54f, 0.0f);
 
@@ -126,6 +128,7 @@ enum {
     COMMAND_PAINT,
     COMMAND_PAINT_MULTIPLE,
     COMMAND_SWAP,
+    COMMAND_SWAP_MULTIPLE,
 };
 
 std::vector<glm::ivec3> command;
@@ -133,5 +136,10 @@ int cmdp = 0;
 // COMMAND_DELAY, frameNum, 0
 // COMMAND_PAINT, i, colour
 // COMMAND_PAINT_MULTIPLE, paintMultipleCube ptr, colour
+// COMMAND_SWAP_MULTIPLE, swapMultipleCube ptr, 0
 
-std::vector < std::vector<int> > paintMultipleCube;
+std::vector< std::vector<int> > paintMultipleCube;
+
+std::vector< std::vector<int> > swapMultipleCube;
+
+std::vector<float> unsortedPos;

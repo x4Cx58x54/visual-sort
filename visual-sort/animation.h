@@ -115,4 +115,13 @@ void parseCommand()
     {
         cubeDelaying = command[cmdp].y;
     }
+    else if (command[cmdp].x == COMMAND_SWAP_MULTIPLE)
+    {
+        std::vector<int>& ind = swapMultipleCube[command[cmdp].y];
+        for(int i = 0; i < cubeNum; ++i)
+        {
+            cubePosX[i] = unsortedPos[ind[i]];
+            updateCubePos(i);
+        }
+    }
 }

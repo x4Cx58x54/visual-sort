@@ -3,6 +3,7 @@
 #include "config.h"
 #include "utils.h"
 #include "animation.h"
+//#include <algorithm>
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -46,20 +47,53 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     else if (key == GLFW_KEY_DELETE && action == GLFW_PRESS)
     {
         visualSortInit();
+        glfwSetWindowTitle(window,"Visualsort");
     }
     else if (key == GLFW_KEY_BACKSPACE && action == GLFW_PRESS)
     {
         unsort();
+        glfwSetWindowTitle(window,"Visualsort");
     }
-    else if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_1 && action == GLFW_PRESS && visualSortState == STATE_IDLE)
     {
         presort();
-        bubbleSort();
+        bubbleSort(0, cubeNum - 1);
+        glfwSetWindowTitle(window,"Bubble Sort - Visualsort");
         postsort();
     }
-
-
-
+    else if (key == GLFW_KEY_2 && action == GLFW_PRESS && visualSortState == STATE_IDLE)
+    {
+        presort();
+        insertionSort(0, cubeNum - 1);
+        glfwSetWindowTitle(window,"Insertion Sort - Visualsort");
+        postsort();
+    }
+    else if (key == GLFW_KEY_3 && action == GLFW_PRESS && visualSortState == STATE_IDLE)
+    {
+        presort();
+        selectionSort(0, cubeNum - 1);
+        glfwSetWindowTitle(window,"Selection Sort - Visualsort");
+        postsort();
+    }
+    else if (key == GLFW_KEY_4 && action == GLFW_PRESS && visualSortState == STATE_IDLE)
+    {
+        presort();
+        quickSort(0, cubeNum - 1);
+        glfwSetWindowTitle(window,"Quick Sort - Visualsort");
+        postsort();
+    }
+    else if (key == GLFW_KEY_5 && action == GLFW_PRESS && visualSortState == STATE_IDLE)
+    {
+        presort();
+        unsortedPos.clear();
+        for(int i = 0; i < cubeNum; ++i)
+        {
+            unsortedPos.push_back(cubePosX[i]);
+        }
+        bogoSort(0, cubeNum - 1);
+        glfwSetWindowTitle(window,"Bogosort - Visualsort");
+        postsort();
+    }
 }
 
 void processInput(GLFWwindow *window)

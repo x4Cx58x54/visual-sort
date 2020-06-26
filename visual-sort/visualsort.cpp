@@ -203,10 +203,10 @@ int main()
                 glUniformMatrix4fv(glGetUniformLocation(lightingShader.id, "model"), 1, GL_FALSE, &model[0][0]);
                 glUniform3fv(glGetUniformLocation(lightingShader.id, "objectColor"), 1, &curCubeColour[i][0]);
                 glDrawArrays(GL_TRIANGLES, 0, 36);
-            }         //                                              /
-        }             //                                             /  Same
-        else          //                                            /
-        {             //                                           v
+            }         //                                              |
+        }             //                                              |  Same
+        else          //                                              |  Need to eliminate redundance
+        {             //                                              v
             --cubeDelaying;
             for (int i = 0; i < cubeNum; ++i)
             {
@@ -218,11 +218,11 @@ int main()
                 glUniform3fv(glGetUniformLocation(lightingShader.id, "objectColor"), 1, &curCubeColour[i][0]);
                 glDrawArrays(GL_TRIANGLES, 0, 36);
             }
-            printf(" ");
+            // printf(" ");
             if (cubeDelaying == 0)
             {
                 visualSortState = STATE_SORT_INTER;
-                putchar('\n');
+                // putchar('\n');
             }
         }
 
@@ -249,7 +249,7 @@ void CreateWindow(GLFWwindow*& window)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Visualsort - OpenGL", NULL, NULL);
+    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Visualsort", NULL, NULL);
     glfwSetWindowPos(window, 200, 50);
     if (window == NULL)
     {
