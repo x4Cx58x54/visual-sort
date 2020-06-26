@@ -45,6 +45,25 @@ struct {
     float start, end, dist, process;
 } grow[maxCubeNum];
 
+
+glm::vec3 cubeColour[maxCubeNum];
+glm::vec3 curCubeColour[maxCubeNum];
+bool painting[maxCubeNum] = { false };
+float paintRate = 0.09;
+struct {
+    float startR, endR, distR;
+    float startG, endG, distG;
+    float startB, endB, distB;
+    float process;
+} paint[maxCubeNum];
+
+
+int cubeDelaying = 0;
+
+int cubeDelayTime = 24;
+
+
+
 int cubeNum = 0;
 
 float unitX = 0.1;
@@ -66,7 +85,7 @@ glm::vec3 colourDeleting(0.32f, 0.32f, 0.50f);
 glm::vec3 colourBlink(0.95f, 0.95f, 0.99f);
 glm::vec3 colourCritical(0.7f, 0.1f, 0.1f);
 glm::vec3 colourLookAt(0.1f, 0.5f, 0.2f);
-glm::vec3 colourSorted(0.1f, 0.2f, 0.1f);
+glm::vec3 colourSorted(0.8f, 0.54f, 0.0f);
 
 enum {
     COLOUR_INIT,
@@ -87,7 +106,6 @@ glm::vec3 colours[] = {
 };
 
 
-glm::vec3 cubeColour[maxCubeNum];
 
 // int cubeIndex[maxCubeNum];
 
@@ -105,11 +123,15 @@ int visualSortState = STATE_IDLE;
 
 enum {
     COMMAND_DELAY,
-    COMMAND_COLOUR,
+    COMMAND_PAINT,
+    COMMAND_PAINT_MULTIPLE,
     COMMAND_SWAP,
 };
 
 std::vector<glm::ivec3> command;
 int cmdp = 0;
 // COMMAND_DELAY, frameNum, 0
-// COMMAND_COLOUR, i, colour
+// COMMAND_PAINT, i, colour
+// COMMAND_PAINT_MULTIPLE, paintMultipleCube ptr, colour
+
+std::vector < std::vector<int> > paintMultipleCube;

@@ -6,7 +6,7 @@
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (key == GLFW_KEY_UP && action == GLFW_PRESS)
+    if (key == GLFW_KEY_UP && action == GLFW_PRESS && visualSortState == STATE_IDLE)
     {
         if (cubeNum < maxCubeNum)
         {
@@ -23,9 +23,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
                 updateCubePos(ci);
             }
             cubeColour[cubeNum - 1] = colourInit;
+            curCubeColour[cubeNum - 1] = colourInit;
         }
     }
-    else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS && visualSortState == STATE_IDLE)
     {
         if (cubeNum > 0)
         {
@@ -33,6 +34,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             cubeActivated[cubeNum - 1] = false;
             cubeHeight[cubeNum - 1] = 0.0f;
             cubeColour[cubeNum - 1] = colourDeleting;
+            curCubeColour[cubeNum - 1] = colourDeleting;
             updateCubeHeight(cubeNum - 1);
             for(int ci = 0; ci < cubeNum; ++ci)
             {
@@ -49,23 +51,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     {
         unsort();
     }
-    else if (key == GLFW_KEY_L && action == GLFW_PRESS)
-    {
-        swapCube(1, 3);
-        visualSortState = STATE_SORT;
-        cubeColour[1] = colourLookAt;
-        cubeColour[3] = colourLookAt;
-    }
-    else if (key == GLFW_KEY_K && action == GLFW_PRESS)
-    {
-        swapCube(0, 3);
-        visualSortState = STATE_SORT;
-        cubeColour[0] = colourLookAt;
-        cubeColour[3] = colourLookAt;
-    }
     else if (key == GLFW_KEY_1 && action == GLFW_PRESS)
     {
+        presort();
         bubbleSort();
+        postsort();
     }
 
 

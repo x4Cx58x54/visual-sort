@@ -12,6 +12,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 GLFWwindow* window;
 void CreateWindow(GLFWwindow*& window);
 
+void renderCubes();
+
 int main()
 {
     CreateWindow(window);
@@ -85,6 +87,8 @@ int main()
     visualSortInit();
     visualSortState = STATE_IDLE;
 
+    srand((unsigned)time(NULL));
+
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = glfwGetTime();
@@ -130,59 +134,100 @@ int main()
 
         glBindVertexArray(cubeVAO);
 
-        if (visualSortState == STATE_SORT_INTER && cmdp < command.size())
+        if (cubeDelaying <= 0 && visualSortState == STATE_SORT_INTER && cmdp < command.size())
         {
             parseCommand();
             visualSortState = STATE_SORT;
         }
 
-        for (int i = 0; i < cubeNum; ++i)
+        if (cubeDelaying <= 0)
         {
-            if (moving[i] && (cubeActivated[cubeNum - 1] || visualSortState == STATE_INIT))
+            for (int i = 0; i < cubeNum; ++i)
             {
-                move[i].process += moveRate;
-                curCubePosX[i] = move[i].start + cubicPos(move[i].dist, move[i].process);
-                if (move[i].process >= 1.0f - moveRate/3) // At finishing
+                if (moving[i] && (cubeActivated[cubeNum - 1] || visualSortState == STATE_INIT))
                 {
-                    curCubePosX[i] = cubePosX[i];
-                    moving[i] = false;
-                    if (visualSortState == STATE_SORT)
+                    move[i].process += moveRate;
+                    curCubePosX[i] = move[i].start + cubicPos(move[i].dist, move[i].process);
+                    if (move[i].process >= 1.0f - moveRate/3) // At finishing
                     {
-                        cubeColour[i] = colourInit;
-                        visualSortState = STATE_SORT_INTER;
+                        curCubePosX[i] = cubePosX[i];
+                        moving[i] = false;
+                        if (visualSortState == STATE_SORT)
+                        {
+                            //cubeColour[i] = colourInit;
+                            //curCubeColour[i] = colourInit;
+                            visualSortState = STATE_SORT_INTER;
+                        }
                     }
                 }
-            }
-            if (growing[i])
-            {
-                grow[i].process += growRate;
-                curCubeHeight[i] = grow[i].start + cubicPos(grow[i].dist, grow[i].process);
-                if (grow[i].process >= 1.0f - growRate/2) // At finishing
+                if (growing[i])
                 {
-                    cubeHeight[i] = curCubeHeight[i];
-                    if (!cubeActivated[cubeNum - 1] && cubeNum > 0)
+                    grow[i].process += growRate;
+                    curCubeHeight[i] = grow[i].start + cubicPos(grow[i].dist, grow[i].process);
+                    if (grow[i].process >= 1.0f - growRate/2) // At finishing
                     {
-                        --cubeNum;
+                        cubeHeight[i] = curCubeHeight[i];
+                        if (!cubeActivated[cubeNum - 1] && cubeNum > 0)
+                        {
+                            --cubeNum;
+                        }
+                        if (visualSortState == STATE_INIT)
+                        {
+                            cubeNum = 0;
+                            visualSortState = STATE_IDLE;
+                        }
+                        growing[i] = false;
                     }
-                    if (visualSortState == STATE_INIT)
-                    {
-                        cubeNum = 0;
-                        visualSortState = STATE_IDLE;
-                    }
-                    growing[i] = false;
                 }
-            }
+                if (painting[i])
+                {
+                    paint[i].process += paintRate;
+                    curCubeColour[i].r = paint[i].startR + cubicPos(paint[i].distR, paint[i].process);
+                    curCubeColour[i].g = paint[i].startG + cubicPos(paint[i].distG, paint[i].process);
+                    curCubeColour[i].b = paint[i].startB + cubicPos(paint[i].distB, paint[i].process);
+                    if (paint[i].process >= 1.0f - paintRate/3) // At finishing
+                    {
+                        curCubeColour[i] = cubeColour[i];
+                        painting[i] = false;
+                        if (visualSortState == STATE_SORT)
+                        {
+                            visualSortState = STATE_SORT_INTER;
+                        }
+                    }
+                }
 
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(0.0f, -0.7f, 0.0f)); // Move down!
-            model = glm::translate(model, glm::vec3(curCubePosX[i], 0.0f, 0.0f));
-            model = glm::scale(model, glm::vec3(1.0f, curCubeHeight[i], 1.0f));
-            glUniformMatrix4fv(glGetUniformLocation(lightingShader.id, "model"), 1, GL_FALSE, &model[0][0]);
-            glUniform3fv(glGetUniformLocation(lightingShader.id, "objectColor"), 1, &cubeColour[i][0]);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+                glm::mat4 model = glm::mat4(1.0f);
+                model = glm::translate(model, glm::vec3(0.0f, -0.7f, 0.0f)); // Move down!
+                model = glm::translate(model, glm::vec3(curCubePosX[i], 0.0f, 0.0f));
+                model = glm::scale(model, glm::vec3(1.0f, curCubeHeight[i], 1.0f));
+                glUniformMatrix4fv(glGetUniformLocation(lightingShader.id, "model"), 1, GL_FALSE, &model[0][0]);
+                glUniform3fv(glGetUniformLocation(lightingShader.id, "objectColor"), 1, &curCubeColour[i][0]);
+                glDrawArrays(GL_TRIANGLES, 0, 36);
+            }         //                                              /
+        }             //                                             /  Same
+        else          //                                            /
+        {             //                                           v
+            --cubeDelaying;
+            for (int i = 0; i < cubeNum; ++i)
+            {
+                glm::mat4 model = glm::mat4(1.0f);
+                model = glm::translate(model, glm::vec3(0.0f, -0.7f, 0.0f)); // Move down!
+                model = glm::translate(model, glm::vec3(curCubePosX[i], 0.0f, 0.0f));
+                model = glm::scale(model, glm::vec3(1.0f, curCubeHeight[i], 1.0f));
+                glUniformMatrix4fv(glGetUniformLocation(lightingShader.id, "model"), 1, GL_FALSE, &model[0][0]);
+                glUniform3fv(glGetUniformLocation(lightingShader.id, "objectColor"), 1, &curCubeColour[i][0]);
+                glDrawArrays(GL_TRIANGLES, 0, 36);
+            }
+            printf(" ");
+            if (cubeDelaying == 0)
+            {
+                visualSortState = STATE_SORT_INTER;
+                putchar('\n');
+            }
         }
 
-        if (visualSortState == STATE_SORT_INTER && cmdp < command.size())
+
+        if (cubeDelaying <= 0 && visualSortState == STATE_SORT_INTER && cmdp < command.size())
         {
             ++cmdp;
         }
