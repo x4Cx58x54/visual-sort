@@ -22,7 +22,7 @@ float lastFrame = 0.0f;
 const int maxCubeNum = 50;
 const int maxCubeHeight = 100;
 
-float speed = 3.0f; // Max 100/{move, grow, paint}Rate.
+float speed = 1.0f; // Max 100/{move, grow, paint}Rate.
 
 
 float cubePosX[maxCubeNum] = {

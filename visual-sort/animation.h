@@ -65,10 +65,6 @@ void postsort()
 void visualSortInit()
 {
     visualSortState = STATE_INIT;
-    // for(int i = 0; i < maxCubeNum; ++i)
-    // {
-    //     cubeIndex[i] = i;
-    // }
     for(int ci = 0; ci < cubeNum; ++ci)
     {
         cubeHeight[ci] = -0.1f;

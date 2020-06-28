@@ -84,15 +84,35 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
     else if (key == GLFW_KEY_5 && action == GLFW_PRESS && visualSortState == STATE_IDLE)
     {
+        if (cubeNum > 6)
+        {
+            printf("Bogosort would take too long.\n");
+            unsort();
+            return;
+        }
         presort();
         unsortedPos.clear();
         for(int i = 0; i < cubeNum; ++i)
         {
+            // unsortedPos.push_back(cubePosX[i]);
+            cubePosX[i] = cubeX(cubeNum, i);
             unsortedPos.push_back(cubePosX[i]);
         }
         bogoSort(0, cubeNum - 1);
+        // for(int i = 0; i < swapMultipleCube.size(); ++i, putchar('\n'))
+        // {
+        //     for(int j = 0; j < swapMultipleCube[i].size(); ++j)
+        //     {
+        //         printf("%d ", swapMultipleCube[i][j]);
+        //     }
+        // }
         glfwSetWindowTitle(window,"Bogosort - Visualsort");
         postsort();
+    }
+    else if (key == GLFW_KEY_P && action == GLFW_PRESS)
+    {
+        for(int i = 0; i < cubeNum; ++i)
+            printf("%.2f  ", cubePosX[i]);
     }
 }
 
