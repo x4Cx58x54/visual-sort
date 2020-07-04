@@ -11,7 +11,7 @@ int randomint(int lower_bound, int upper_bound)
 
 float cubicPos(float des, float t)
 {
-    return (3.0f*des*t*t) - (2.0f*des*t*t);
+    return (3.0f*des*t*t) - (2.0f*des*t*t*t);
     // return (3.0f*des*t*t)/(endt*endt) - (2.0f*des*t*t)/(endt*endt*endt);
 }
 

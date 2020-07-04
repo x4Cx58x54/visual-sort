@@ -18,7 +18,7 @@ int main()
 {
     CreateWindow(window);
 
-    Shader lightingShader("phong.vert", "phong.frag");
+    Shader lightingShader("blinn-phong.vert", "blinn-phong.frag");
 
     float vertices[] = {
         -unitX, -0.0f, -unitZ,  0.0f,  0.0f, -1.0f,
